@@ -12,11 +12,16 @@ catatan:
 """
 
 class CharStream:
-    def __init__(self, text: str):
-        self.text = text
+    def __init__(self, filepath: str):
+        self.text = None
+        self.load(filepath)
         self.pos = 0
         self.row = 1
         self.col = 1
+
+    def load(self, filepath: str):
+        with open(filepath, 'r') as f:
+            self.text = f.read()
 
     def eof(self) -> bool:
         return self.pos >= len(self.text)
