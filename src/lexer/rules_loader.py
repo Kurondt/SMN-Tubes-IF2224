@@ -8,6 +8,7 @@ class Rule:
         self.transition = {}
         self.initial_state = {}
         self.final_states = {}
+        self.lookup = {}
 
     def load_rule(self, path: Optional[Union[str, Path]] = None):
         if path is None:
@@ -33,5 +34,5 @@ class Rule:
         self.initial_state = data["initial_state"]
         self.final_states = data["final_states"]
         self.transition = data["transition"]
-
+        self.lookup = data["lookup"]
         return self
