@@ -35,4 +35,5 @@ class Rule:
         self.final_states = data["final_states"]
         self.transition = data["transition"]
         self.lookup = data["lookup"]
+        self.char_classes = data["char_classes"]
         return self
