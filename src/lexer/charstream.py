@@ -12,16 +12,11 @@ catatan:
 """
 
 class CharStream:
-    def __init__(self, filepath: str):
-        self.text = None
-        self.load(filepath)
+    def __init__(self, text: str):
+        self.text = text
         self.pos = 0
         self.row = 1
         self.col = 1
-
-    def load(self, filepath: str):
-        with open(filepath, 'r') as f:
-            self.text = f.read()
 
     def eof(self) -> bool:
         return self.pos >= len(self.text)
@@ -33,8 +28,8 @@ class CharStream:
 
     def next(self) -> str:
         # note : yg dilakukan next adalah (pindah posisi -> peek)
-        self.pos += 1
         char = self.peek()
+        self.pos += 1
         if char == '\n':
             self.row += 1
             self.col = 1
