@@ -5,6 +5,8 @@
         "ART": "ARITHMETIC_OPERATOR",
         "REL_F": "RELATIONAL_OPERATOR",
         "ASG_F": "ASSIGN_OPERATOR",
+        "ASG_B": "ASSIGN_OPERATOR",
+        "ASG_S": "ASSIGN_OPERATOR",
         "NUM": "NUMBER",
         "NUM_D_F": "NUMBER",
         "NUM_D_E_F": "NUMBER",
