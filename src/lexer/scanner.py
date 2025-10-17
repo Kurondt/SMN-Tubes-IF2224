@@ -76,6 +76,7 @@ class Scanner:
         if last_acc_state: 
             token_type = rules.final_states[last_acc_state]
             # check loop table
+            lexeme = lexeme.strip()
             if rules.lookup.get(lexeme.lower()) is not None:
                 token_type = rules.lookup.get(lexeme.lower())
             return Token(token_type, lexeme, last_acc_pos[0], last_acc_pos[1])
