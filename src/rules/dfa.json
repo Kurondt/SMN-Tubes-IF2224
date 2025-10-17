@@ -46,7 +46,8 @@
 
         "IDT": {
             "LETTER": "IDT",
-            "DIGIT": "IDT"
+            "DIGIT": "IDT",
+            "_": "IDT"
         },
 
         "NUM": {
@@ -55,31 +56,36 @@
         },
 
         "NUM_D": {
-            "DIGIT": "NUM_D_F",
-            "E": "NUM_D_E"
+            "E": "NUM_D_E",
+            "DIGIT": "NUM_D_F"
         },
 
         "NUM_D_F": {
-            "DIGIT": "NUM_D_F",
-            "E": "NUM_D_E"
+            "E": "NUM_D_E",
+            "DIGIT": "NUM_D_F"
         },
 
         "NUM_D_E": {
-            "DIGIT": "NUM_D_E_F",
-            "-": "NUM_D_E_NEG"
+            "-": "NUM_D_E_NEG",
+            "DIGIT": "NUM_D_E_F"
         },
 
         "NUM_D_E_F": {
+            "-": "NUM_D_E_NEG",
             "DIGIT": "NUM_D_E_F"
         },
 
         "NUM_D_E_NEG": {
-            "DIGIT": "NUM_D_E_F"
+            "DIGIT": "NUM_D_E"
+        },
+
+        "NUM_D_E_NEG_F": {
+            "DIGIT": "NUM_D_E_NEG_F"
         },
 
         "MIN": {
-            "DIGIT": "NUM",
-            "WHITESPACE": "ART"
+            "WHITESPACE": "ART",
+            "DIGIT": "NUM"
         },
 
         "REL_S": {
@@ -91,20 +97,23 @@
             "=": "REL_F"
         },
 
-        "COL_ASG": {
-            "=": "ASG_F",
-            "WHITESPACE": "COL",
-            "\n": "COL"
+        "COL": {
+            "=": "ASG_F"
         },
 
         "CHR": {
-            "ANY": "CHR_BODY",
+            "ANY": "CHR_1",
             "'": "CHR_F"
         },
 
-        "CHR_BODY": {
-            "'": "CHR_F",
-            "ANY": "CHR_BODY"
+        "CHR_1": {
+            "ANY": "STR",
+            "'": "CHR_F"
+        },
+
+        "STR": {
+            "ANY": "STR",
+            "'": "STR_F"
         },
 
         "DOT": {
@@ -113,7 +122,7 @@
     },
 
     "char_classes": {
-        "LETTER": "a-zA-Z_",
+        "LETTER": "a-zA-Z",
         "DIGIT": "0-9",
         "WHITESPACE": "[' ', '\\t', '\\n']",
         "ANY": "any character except quote"
