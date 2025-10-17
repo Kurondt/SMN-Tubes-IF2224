@@ -16,7 +16,7 @@
         "COL": "COLON",
         "DOT": "DOT",
         "LPA": "LPARENTHESIS",
-        "RPA": "RPARANTHESIS",
+        "RPA": "RPARENTHESIS",
         "LBR": "LBRACKET",
         "RBR": "RBRACKET",
         "RANGE": "RANGE_OPERATOR"
@@ -40,7 +40,7 @@
             "[": "LBR",
             "]": "RBR",
             "'": "CHR",
-            ":": "COL_ASG",
+            ":": "COL",
             "WHITESPACE": "S0"
         },
 
@@ -124,7 +124,7 @@
     "char_classes": {
         "LETTER": "a-zA-Z",
         "DIGIT": "0-9",
-        "WHITESPACE": "^[ \\t\\n]$",
+        "WHITESPACE": "^[ \\t\\n\\r]$",
         "ANY": "^.$"
     },
 
@@ -150,6 +150,7 @@
         "const": "KEYWORD",
         "type": "KEYWORD",
         "procedure": "KEYWORD",
+        "begin": "KEYWORD",
         "mod": "ARITHMETIC_OPERATOR",
         "div": "ARITHMETIC_OPERATOR",
         "and": "LOGICAL_OPERATOR",
