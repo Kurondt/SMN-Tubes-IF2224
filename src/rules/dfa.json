@@ -124,8 +124,8 @@
     "char_classes": {
         "LETTER": "a-zA-Z",
         "DIGIT": "0-9",
-        "WHITESPACE": "[' ', '\\t', '\\n']",
-        "ANY": "any character except quote"
+        "WHITESPACE": "^[ \\t\\n]$",
+        "ANY": "^.$"
     },
 
     "lookup": {
