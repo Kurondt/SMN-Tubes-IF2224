@@ -58,6 +58,7 @@
         },
 
         "NUM_D": {
+            "." : "RANGE",
             "E": "NUM_D_E",
             "DIGIT": "NUM_D_F"
         },
@@ -116,10 +117,6 @@
         "STR": {
             "ANY": "STR",
             "'": "STR_F"
-        },
-
-        "DOT": {
-            ".": "RANGE"
         }
     },
 
