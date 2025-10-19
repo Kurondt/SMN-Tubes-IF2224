@@ -3,7 +3,6 @@
     "final_states": {
         "IDT": "IDENTIFIER",
         "ART": "ARITHMETIC_OPERATOR",
-        "MIN": "ARITHMETIC_OPERATOR",
         "REL_F": "RELATIONAL_OPERATOR",
         "REL_B": "RELATIONAL_OPERATOR",
         "REL_S": "RELATIONAL_OPERATOR",
@@ -29,7 +28,7 @@
             "DIGIT": "NUM",
             "+": "ART",
             "*": "ART",
-            "-": "MIN",
+            "-": "ART",
             "/": "ART",
             "=": "REL_F",
             "<": "REL_S",
@@ -68,21 +67,11 @@
         },
 
         "NUM_D_E": {
-            "-": "NUM_D_E_NEG",
             "DIGIT": "NUM_D_E_F"
         },
 
         "NUM_D_E_F": {
-            "-": "NUM_D_E_NEG",
             "DIGIT": "NUM_D_E_F"
-        },
-
-        "NUM_D_E_NEG": {
-            "DIGIT": "NUM_D_E"
-        },
-
-        "NUM_D_E_NEG_F": {
-            "DIGIT": "NUM_D_E_NEG_F"
         },
 
         "REL_S": {
