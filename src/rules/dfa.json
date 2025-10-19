@@ -133,6 +133,8 @@
         "type": "KEYWORD",
         "procedure": "KEYWORD",
         "begin": "KEYWORD",
+        "true": "KEYWORD",
+        "false": "KEYWORD",
         "mod": "ARITHMETIC_OPERATOR",
         "div": "ARITHMETIC_OPERATOR",
         "and": "LOGICAL_OPERATOR",
