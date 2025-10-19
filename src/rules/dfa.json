@@ -10,7 +10,6 @@
         "NUM": "NUMBER",
         "NUM_D_F": "NUMBER",
         "NUM_D_E_F": "NUMBER",
-        "NUM_D_E_NEG_F": "NUMBER",
         "CHR_F": "CHAR_LITERAL",
         "STR_F": "STRING_LITERAL",
         "COM": "COMMA",
