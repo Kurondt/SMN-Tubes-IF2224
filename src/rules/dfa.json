@@ -21,8 +21,7 @@
         "LPA": "LPARENTHESIS",
         "RPA": "RPARENTHESIS",
         "LBR": "LBRACKET",
-        "RBR": "RBRACKET",
-        "RANGE": "RANGE_OPERATOR"
+        "RBR": "RBRACKET"
     },
     "transition": {
         "S0": {
@@ -59,7 +58,6 @@
         },
 
         "NUM_D": {
-            "." : "RANGE",
             "E": "NUM_D_E",
             "DIGIT": "NUM_D_F"
         },
