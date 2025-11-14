@@ -60,17 +60,10 @@ class Parser:
     '''
 
     def program(self) : 
-        self.program_header()
-        self.declaration_part()
-        self.compound_statement()
-
-        self.match("DOT")
+        return self.program_header() and self.declaration_part() and self.compound_statement() and self.match("DOT")
 
     def program_header(self) :
-        self.match("KEYWORD", "program")
-        self.match("IDENTIFIER")
-        self.match("SEMICOLON")
+        return self.match("KEYWORD", "program") and self.match("IDENTIFIER") and self.match("SEMICOLON")
 
-    def declaration_part(self) :
 
 
