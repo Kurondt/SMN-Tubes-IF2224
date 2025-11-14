@@ -23,12 +23,11 @@ class Parser:
             return True
         return False
 
-
-    def consume(self, token_type : str, token_value: str = None) -> Token:
+    def consume(self, token_type : str, token_value: str = None) -> ParseTree:
         token = self.lookahead()
         if token.type == token_type and (token_value is None or token.value == token_value):
             self.next_token()
-            return token
+            return ParseTree(str(token))
         raise SyntaxError(f"Expected token {token_type} with value {token_value}, but got {token}", token.line, token.col)
 
     '''
@@ -76,24 +75,38 @@ class Parser:
         node.add_child(self.declaration_part())
         node.add_child(self.compound_statement())
         if self.match("DOT"):
-            node.add_child(ParseTree("<DOT>"))
+            node.add_child(str(self.consume("DOT")))
         return node
 
     def program_header(self) :
         node = ParseTree("<program_header>")
         if self.match("KEYWORD", "program"):
-            node.add_child(ParseTree())
+            node.add_child(str(self.consume("KEYWORD", "program")))
         if self.match("IDENTIFIER"):
-            node.add_child(ParseTree("<IDENTIFIER>"))
+            node.add_child(str(self.consume("IDENTIFIER")))
+        if self.match("SEMICOLON"):
+            node.add_child(str(self.consume("SEMICOLON")))
 
-    # def declaration_part(self) ->  :
-    #     while self.const_declaration():
-    #         pass 
-    #     while self.type_declaration():
-    #         pass
-    #     while self.var_declaration():
-    #         pass
-    #     while self.subprogram_declaration():
-    #         pass
+        return node
+
+    # def declaration_part(self) -> ParseTree :
+    #     node = ParseTree("<declaration_part>")
+    #     while self.match(
+
+    def const_declaration(self) -> ParseTree:
+        node = ParseTree("<const_declaration>")
+        if self.match("KEYWORD", "konstanta"):
+            node.add_child(str(self.consume("KEYWORD", "konstanta")))
+
+        if not self.match("IDENTIFIER"):
+            raise SyntaxError("Expected identifier in constant declaration", self.lookahead().line, self.lookahead().col)
+        
+        while self.match("IDENTIFIER"):
+            node.add_child(str(self.consume("IDENTIFIER")))
+            if self.match("ASSIGN_OPERATOR"):
+                node.add_child(str(self.consume("ASSIGN_OPERATOR")))
+            
+            
+        
 
 
