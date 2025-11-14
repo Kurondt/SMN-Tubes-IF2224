@@ -1,0 +1,69 @@
+
+
+from src.parser.parsertree import ParserTree
+from src.lexer.token import Token
+
+class Parser:
+    def __init__(self, tokens: list):
+        self.tokens = tokens
+        self.pos = 0
+
+    def lookahead(self) -> Token:
+        return self.tokens[self.pos] if self.pos < len(self.tokens) else None
+
+    def parse(self) -> ParserTree:
+        pass 
+
+    def match(self, token_type : str) -> bool:
+        if self.lookahead().type == token_type :
+            self.pos += 1
+        else : 
+            raise SyntaxError("Unexpected token")
+
+
+    '''
+    HARDCODED PRODUCTION RULES  
+
+    // YAYAT
+    daftar node : 
+    program 
+    program_header
+    declaration_part
+    const_declaration
+    type_declaration
+    var_declaration
+    identifier_list
+    type
+    array_type
+    range 
+    subprogram_declaration
+    procedure_declaration
+    function_declaration
+    formal_parameter_list
+    compound_statement
+
+    // BAMA 
+    statement_list
+    assignment_statement
+    if_statement
+    while_statement
+    for_statement
+    procedure_or_function_call
+    parameter_list
+    expression
+    simple_expression
+    term
+    factor
+    relational_operator
+    additive_operator
+    multiplicative_operator
+
+    '''
+
+    def program(self) : 
+        self.program_header()
+        self.declaration_part()
+        self.compound_statement()
+
+        self.match("DOT")
+
