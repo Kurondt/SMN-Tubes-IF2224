@@ -4,9 +4,9 @@ class LexError(Exception):
         self.line = line
         self.col = col
         
-class ParseError(Exception):
+class SyntaxError(Exception):
     def __init__(self, message: str, line: int, col: int):
-        super().__init__(f"ParseError at {line}:{col} – {message}")
+        super().__init__(f"SyntaxError at {line}:{col} – {message}")
         self.line = line
         self.col = col
 

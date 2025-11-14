@@ -1,7 +1,8 @@
 
 
-from src.parser.parsertree import ParserTree
+from src.parser.parsertree import ParseTree
 from src.lexer.token import Token
+from src.errors import SyntaxError
 
 class Parser:
     def __init__(self, tokens: list):
@@ -11,14 +12,24 @@ class Parser:
     def lookahead(self) -> Token:
         return self.tokens[self.pos] if self.pos < len(self.tokens) else None
 
-    def parse(self) -> ParserTree:
+    def next_token(self):
+        self.pos += 1
+
+    def parse(self) -> ParseTree:
         pass 
 
     def match(self, token_type : str, token_value: str = None) -> bool:
         if self.lookahead().type == token_type and (token_value is None or self.lookahead().value == token_value):
-            self.pos += 1
             return True
         return False
+
+
+    def consume(self, token_type : str, token_value: str = None) -> Token:
+        token = self.lookahead()
+        if token.type == token_type and (token_value is None or token.value == token_value):
+            self.next_token()
+            return token
+        raise SyntaxError(f"Expected token {token_type} with value {token_value}, but got {token}", token.line, token.col)
 
     '''
     HARDCODED PRODUCTION RULES  
@@ -59,11 +70,30 @@ class Parser:
 
     '''
 
-    def program(self) : 
-        return self.program_header() and self.declaration_part() and self.compound_statement() and self.match("DOT")
+    def program(self) -> ParseTree : 
+        node = ParseTree("<program>")
+        node.add_child(self.program_header())
+        node.add_child(self.declaration_part())
+        node.add_child(self.compound_statement())
+        if self.match("DOT"):
+            node.add_child(ParseTree("<DOT>"))
+        return node
 
     def program_header(self) :
-        return self.match("KEYWORD", "program") and self.match("IDENTIFIER") and self.match("SEMICOLON")
+        node = ParseTree("<program_header>")
+        if self.match("KEYWORD", "program"):
+            node.add_child(ParseTree())
+        if self.match("IDENTIFIER"):
+            node.add_child(ParseTree("<IDENTIFIER>"))
 
+    # def declaration_part(self) ->  :
+    #     while self.const_declaration():
+    #         pass 
+    #     while self.type_declaration():
+    #         pass
+    #     while self.var_declaration():
+    #         pass
+    #     while self.subprogram_declaration():
+    #         pass
 
 
