@@ -14,12 +14,11 @@ class Parser:
     def parse(self) -> ParserTree:
         pass 
 
-    def match(self, token_type : str) -> bool:
-        if self.lookahead().type == token_type :
+    def match(self, token_type : str, token_value: str = None) -> bool:
+        if self.lookahead().type == token_type and (token_value is None or self.lookahead().value == token_value):
             self.pos += 1
         else : 
             raise SyntaxError("Unexpected token")
-
 
     '''
     HARDCODED PRODUCTION RULES  
@@ -66,4 +65,6 @@ class Parser:
         self.compound_statement()
 
         self.match("DOT")
+
+    def program_header(self) :
 
