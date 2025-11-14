@@ -12,7 +12,8 @@ def main():
     rules = Rule().load_rule(args.dfa)
     scanner = Scanner(rules, text)
     try:
-        for tok in scanner.tokenize():
+         token_list = scanner.tokenize()
+         for tok in token_list:
             print(repr(tok))
     except LexError as e:
         print(e)
