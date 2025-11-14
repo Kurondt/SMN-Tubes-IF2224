@@ -17,8 +17,8 @@ class Parser:
     def match(self, token_type : str, token_value: str = None) -> bool:
         if self.lookahead().type == token_type and (token_value is None or self.lookahead().value == token_value):
             self.pos += 1
-        else : 
-            raise SyntaxError("Unexpected token")
+            return True
+        return False
 
     '''
     HARDCODED PRODUCTION RULES  
@@ -67,4 +67,10 @@ class Parser:
         self.match("DOT")
 
     def program_header(self) :
+        self.match("KEYWORD", "program")
+        self.match("IDENTIFIER")
+        self.match("SEMICOLON")
+
+    def declaration_part(self) :
+
 
