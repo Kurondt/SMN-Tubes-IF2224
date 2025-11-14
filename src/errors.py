@@ -3,3 +3,10 @@ class LexError(Exception):
         super().__init__(f"LexError at {line}:{col} – {message}")
         self.line = line
         self.col = col
+        
+class ParseError(Exception):
+    def __init__(self, message: str, line: int, col: int):
+        super().__init__(f"ParseError at {line}:{col} – {message}")
+        self.line = line
+        self.col = col
+
