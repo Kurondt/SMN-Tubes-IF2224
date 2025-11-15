@@ -9,8 +9,11 @@ class Parser:
         self.tokens = tokens
         self.pos = 0
 
-    def lookahead(self) -> Token:
+    def peek(self) -> Token:
         return self.tokens[self.pos] if self.pos < len(self.tokens) else None
+
+    def lookahead(self) -> Token:
+        return self.tokens[self.pos + 1] if self.pos + 1 < len(self.tokens) else None
 
     def next_token(self):
         self.pos += 1
@@ -19,12 +22,12 @@ class Parser:
         pass 
 
     def match(self, token_type : str, token_value: str = None) -> bool:
-        if self.lookahead().type == token_type and (token_value is None or self.lookahead().value == token_value):
+        if self.peek().type == token_type and (token_value is None or self.peek().value == token_value):
             return True
         return False
 
     def consume(self, token_type : str, token_value: str = None) -> ParseTree:
-        token = self.lookahead()
+        token = self.peek()
         if token.type == token_type and (token_value is None or token.value == token_value):
             self.next_token()
             return ParseTree(str(token))
@@ -109,14 +112,14 @@ class Parser:
             node.add_child(self.consume("KEYWORD", "konstanta"))
 
         if not self.match("IDENTIFIER"):
-            raise SyntaxError("Expected identifier in constant declaration", self.lookahead().line, self.lookahead().col)
+            raise SyntaxError("Expected identifier in constant declaration", self.peek().line, self.peek().col)
         
         while self.match("IDENTIFIER"):
             node.add_child(self.consume("IDENTIFIER"))
             if self.match("ASSIGN_OPERATOR"):
                 node.add_child(self.consume("ASSIGN_OPERATOR"))
             if self.match("NUMBER") or self.match("STRING_LITERAL") or self.match("CHAR_LITERAL"):
-                node.add_child(self.consume(self.lookahead().type))
+                node.add_child(self.consume(self.peek().type))
             if self.match("SEMICOLON"):
                 node.add_child(self.consume("SEMICOLON"))
 
@@ -128,7 +131,7 @@ class Parser:
             node.add_child(self.consume("KEYWORD", "tipe"))
 
         if not self.match("IDENTIFIER"):
-            raise SyntaxError("Expected identifier in type declaration", self.lookahead().line, self.lookahead().col)
+            raise SyntaxError("Expected identifier in type declaration", self.peek().line, self.peek().col)
         
         while self.match("IDENTIFIER"):
             node.add_child(self.consume("IDENTIFIER"))
