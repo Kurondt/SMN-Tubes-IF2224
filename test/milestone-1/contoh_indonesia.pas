@@ -5,7 +5,7 @@ konstanta
 
 tipe
   indeks = integer;
-  daftar_nilai = larik[1..BATAS_MAKS] dari integer;
+  daftar_nilai = larik[1..10] dari integer;
   koordinat = rekaman
     x: real;
     y: real;

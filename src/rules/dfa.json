@@ -16,6 +16,7 @@
         "SEM": "SEMICOLON",
         "COL": "COLON",
         "DOT": "DOT",
+        "RNG": "RANGE_OPERATOR",
         "LPA": "LPARENTHESIS",
         "RPA": "RPARENTHESIS",
         "LBR": "LBRACKET",
@@ -43,6 +44,9 @@
             ":": "COL",
             "WHITESPACE": "S0"
         },
+        "DOT": {
+            ".": "RNG"
+        }, 
 
         "IDT": {
             "LETTER": "IDT",
