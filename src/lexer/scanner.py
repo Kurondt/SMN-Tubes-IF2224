@@ -25,20 +25,17 @@ class Scanner:
         self.mapping: dict[str,str] = self.expand_char(self.rules.char_classes)
 
     def tokenize(self) -> list[Token]:
-        tokens = []
+        tokens: list[Token] = []
 
         while True:
             token = self.next_token()
             if token is None:
                 break
-            elif token == "":
-                pass
             tokens.append(token)
 
         return tokens
 
-    def next_token(self) -> Token:
-
+    def next_token(self) -> Token | None:
         self.skip_whitespace()
 
         cm = self.cm
@@ -47,9 +44,12 @@ class Scanner:
         if cm.eof():
             return None
         
+        token_line, token_col = cm.get_pos()
         state = rules.initial_state
         last_acc_state = None
-        last_acc_pos = None
+        last_acc_pos: tuple[int, int] | None = None
+        last_acc_index: int | None = None
+        last_acc_lexeme = ""
         lexeme = ""
 
         while not cm.eof():
@@ -57,13 +57,11 @@ class Scanner:
             char_class = self.classify_char(ch)
 
             next_state = rules.transition.get(state, {}).get(char_class)
+            if next_state is None:
+                next_state = rules.transition.get(state, {}).get("ANY")
 
             if next_state is None:
-                if rules.transition.get(state) is not None and rules.transition[state].get("ANY"):
-                    next_state  = rules.transition[state]["ANY"]
-                    pass
-                else:
-                    break
+                break
 
             lexeme += cm.next()
             state = next_state
@@ -71,17 +69,24 @@ class Scanner:
             if state in rules.final_states:
                 last_acc_state = state
                 last_acc_pos = cm.get_pos()
+                last_acc_index = cm.pos
+                last_acc_lexeme = lexeme
 
-        
-        if last_acc_state: 
+        if last_acc_state is not None and last_acc_pos is not None and last_acc_index is not None:
+            cm.pos = last_acc_index
+            cm.row, cm.col = last_acc_pos
+
+            lexeme = last_acc_lexeme
             token_type = rules.final_states[last_acc_state]
-            # check loop table
-            lexeme = lexeme.strip()
-            if rules.lookup.get(lexeme.lower()) is not None:
-                token_type = rules.lookup.get(lexeme.lower())
-            return Token(token_type, lexeme, last_acc_pos[0], last_acc_pos[1])
+            lookup_type = rules.lookup.get(lexeme.lower())
+            if lookup_type is not None:
+                token_type = lookup_type
+
+            return Token(token_type, lexeme, token_line, token_col)
         
-        raise LexError(f"Unexpected character '{cm.peek()}' at {cm.get_pos()}", cm.get_pos()[0], cm.get_pos()[1] - len(lexeme) + 1)
+        error_char = cm.peek()
+        err_line, err_col = cm.get_pos()
+        raise LexError(f"Unexpected character '{error_char}' at {err_line}:{err_col}", err_line, err_col)
 
     def classify_char(self,ch: str) -> str:
         value = ""
