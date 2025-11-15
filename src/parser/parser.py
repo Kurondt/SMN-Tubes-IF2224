@@ -125,6 +125,258 @@ class Parser:
 
         return node
             
+    def statement_list(self) -> ParseTree:
+        node = ParseTree("<statement-list>")
+        
+        node.add_child(self.statement())
+        
+        while self.match("SEMICOLON", ";"):
+            
+            if self.lookahead() and self.lookahead().type == "KEYWORD" and self.lookahead().value == "selesai":
+                node.add_child(self.consume("SEMICOLON", ";"))
+                break
+
+            node.add_child(self.consume("SEMICOLON", ";"))
+            node.add_child(self.statement())
+            
+        return node
+
+    def statement(self) -> ParseTree:
+
+        
+        if self.match("KEYWORD", "mulai"):
+            return self.compound_statement()
+            
+        elif self.match("KEYWORD", "jika"):
+            return self.if_statement()
+            
+        elif self.match("KEYWORD", "selama"):
+            return self.while_statement()
+            
+        elif self.match("KEYWORD", "untuk"):
+            return self.for_statement()
+            
+        elif self.match("IDENTIFIER"):
+
+            if self.lookahead() and self.lookahead().type == "ASSIGN_OPERATOR":
+                return self.assignment_statement()
+            else:
+                return self.procedure_function_call()
+        
+        else:
+            token = self.lookahead()
+
+            raise SyntaxError(f"Expected a statement (mulai, jika, or IDENTIFIER), but got {token}",
+                              token.line())
+
+    def assignment_statement(self):
+        node = ParseTree("<assignment-statement>")
+
+        node.add_child(self.consume("IDENTIFIER"))
+        node.add_child(self.consume("ASSIGN_OPERATOR"))
+        node.add_child(self.expression())
+
+        return node
+
+    def if_statement(self):
+        # TODO Coba koreksi, harusnya if ga wajib else
+        node = ParseTree("<if-statement>")
+
+        node.add_child(self.consume("KEYWORD", "jika"))
+        node.add_child(self.expression())
+        node.add_child(self.consume("KEYWORD", "maka"))
+        node.add_child(self.statement())
+
+        if (self.match("KEYWORD", "selain_itu")):
+            node.add_child(self.consume("KEYWORD", "selain_itu"))
+            node.add_child(self.statement())
+
+        return node
+
+
+    def while_statement(self):
+        node = ParseTree("<while-statement>")
+
+        node.add_child(self.consume("KEYWORD", "selama"))
+        node.add_child(self.expression())
+        node.add_child(self.consume("KEYWORD", "lakukan"))
+        node.add_child(self.statement())
+
+        return node
+    
+    def for_statement(self):
+        node = ParseTree("<for-statement>")
+
+        node.add_child(self.consume("KEYWORD", "untuk"))
+        node.add_child(self.consume("IDENTIFIER"))
+        node.add_child(self.consume("ASSIGN_OPERATOR", ":="))
+        node.add_child(self.expression())
+
+        if (self.match("KEYWORD", "ke")):
+            node.add_child(self.consume("KEYWORD", "ke"))
+        else:
+            node.add_child(self.consume("KEYWORD", "turun_ke"))
+
+        node.add_child(self.expression())
+        node.add_child(self.consume("KEYWORD", "lakukan"))
+        node.add_child(self.statement())
+
+        return node
+    
+    def procedure_or_function_call(self):
+        # TODO Harusnya sih ya , call tu ga wajib parameter list tapi di spek diwajibin ada, tapi aku implementasi ga wajib bodoamat wle
+        node = ParseTree("<procedure/function-call>")
+
+        node.add_child(self.consume("IDENTIFIER"))
+        node.add_child(self.consume("LPARENTHESIS", "("))
+
+        if (not self.match("RPARENTHESIS", ")")):
+            node.add_child(self.parameter_list())
+
+        node.add_child(self.consume("RPARENTHESIS", ")"))
+
+        return node
+
+    def parameter_list(self):
+        node = ParseTree("<parameter-list>")
+
+        node.add_child(self.expression())
+
+        while self.match("COMMA", ","):
+            node.add_child(self.consume("COMMA", ","))
+            node.add_child(self.expression())
+
+        return node
+
+    def expression(self):
+        node = ParseTree("<expression>")
+
+        node.add_child(self.simple_expression())
+
+        if self.match("RELATIONAL_OPERATOR"):
+            node.add_child(self.relational_operator())
+            node.add_child(self.simple_expression())
+
+        return node
+
+    def simple_expression(self):
+        node = ParseTree("<simple-expression>")
+
+        if self.match("ARITHMETIC_OPERATOR", "+"):
+            node.add_child(self.consume("ARITHMETIC_OPERATOR", "+"))
+        elif self.match("ARITHMETIC_OPERATOR", "-"):
+            node.add_child(self.consume("ARITHMETIC_OPERATOR", "-"))
+            
+        node.add_child(self.term())
+
+        while self.match("ARITHMETIC_OPERATOR", "+") or self.match("ARITHMETIC_OPERATOR", "-") or self.match("KEYWORD", "atau"):
+            node.add_child(self.additive_operator())
+            node.add_child(self.term())
+
+        return node
+
+    def term(self):
+        node = ParseTree("<term>")
+
+        node.add_child(self.factor())
+
+        while self.match("ARITHMETIC_OPERATOR", "*") or self.match("ARITHMETIC_OPERATOR", "/") or self.match("KEYWORD", "dan") or self.match("ARITHMETIC_OPERATOR", "mod") or self.match("ARITHMETIC_OPERATOR", "bagi"):
+            node.add_child(self.multiplicative_operator())
+            node.add_child(self.term)
+
+        return node
+
+    def factor(self):
+        node = ParseTree("<factor>")
+
+        if self.match("IDENTIFIER"):
+            node.add_child(self.consume("IDENTIFIER"))
+        elif self.match("NUMBER"):
+            node.add_child(self.consume("NUMBER"))
+        elif self.match("CHAR_LITERAL", "'"):
+            node.add_child(self.consume("CHAR_LITERAL", "'"))
+        elif self.match("STRING_LITERAL", '"'):
+            node.add_child(self.consume("STRING_LITERAL", '"'))
+         # TODO ada masalah jadi ga dilanjutin dulu
+
+
+        return node
+    
+    def relational_operator(self):
+        node = ParseTree("<relational-operator>")
+
+        if self.match("RELATIONAL_OPERATOR", "="):
+            node.add_child(self.consume("RELATIONAL_OPERATOR", "="))
+
+        elif self.match("RELATIONAL_OPERATOR", "<>"):
+            node.add_child(self.consume("RELATIONAL_OPERATOR", "<>"))
+
+        elif self.match("RELATIONAL_OPERATOR", "<"):
+            node.add_child(self.consume("RELATIONAL_OPERATOR", "<"))
+
+        elif self.match("RELATIONAL_OPERATOR", "<="):
+            node.add_child(self.consume("RELATIONAL_OPERATOR", "<="))
+
+        elif self.match("RELATIONAL_OPERATOR", ">"):
+            node.add_child(self.consume("RELATIONAL_OPERATOR", ">"))
+
+        else:
+            node.add_child(self.consume("RELATIONAL_OPERATOR", ">="))
+
+        return node
+
+    def additive_operator(self):
+        node = ParseTree("<additive-operator>")
+
+        if self.match("ARITHMETIC_OPERATOR", "+"):
+            node.add_child(self.consume("ARITHMETIC_OPERATOR", "+"))
+
+        elif self.match("ARITHMETIC_OPERATOR", "-"):
+            node.add_child(self.consume("ARITHMETIC_OPERATOR", "-"))
+
+        else:
+            node.add_child(self.consume("KEYWORD", "atau"))
+
+        return node
+    
+    def multiplicative_operator(self):
+        node = ParseTree("<multiplicative-operator>")
+
+        if self.match("ARITHMETIC_OPERATOR", "*"):
+            node.add_child(self.consume("ARITHMETIC_OPERATOR", "*"))
+
+        elif self.match("ARITHMETIC_OPERATOR", "/"):
+            node.add_child(self.consume("ARITHMETIC_OPERATOR", "/"))
+
+        elif self.match("ARITHMETIC_OPERATOR", "bagi"):
+            node.add_child(self.consume("ARITHMETIC_OPERATOR", "bagi"))
+
+        elif self.match("ARITHMETIC_OPERATOR", "mod"):
+            node.add_child(self.consume("ARITHMETIC_OPERATOR", "mod"))
+
+        else:
+            node.add_child(self.consume("KEYWORD", "dan"))
+
+        return node
+
+"""
+    // BAMA 
+    statement_list
+    assignment_statement
+    if_statement
+    while_statement
+    for_statement
+    procedure_or_function_call
+    parameter_list
+    expression
+    simple_expression
+    term
+    factor
+    relational_operator
+    additive_operator
+    multiplicative_operator
+"""
+       
     def type_declaration(self) -> ParseTree:
         node = ParseTree("<type_declaration>")
         if self.match("KEYWORD", "tipe"):
