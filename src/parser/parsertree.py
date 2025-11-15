@@ -14,12 +14,12 @@ class ParseTree:
     def __repr__(self):
         return f"ParseTree({self.value!r}, children={self.children!r})"
     
-    def pretty_print(self, indent=0):
-        print(' ' * indent + str(self.value))
-        for child in self.children:
-            child.pretty_print(indent + 1)
+    # def pretty_print(self, indent=0):
+    #     print(' ' * indent + str(self.value))
+    #     for child in self.children:
+    #         child.pretty_print(indent + 1)
 
-    def pretty_print_2(self, prefix="", is_last=True):
+    def pretty_print(self, prefix="", is_last=True):
         """
         prefix: indent sebelum node
         is_last: apakah node ini anak terakhir
