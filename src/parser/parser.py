@@ -9,6 +9,9 @@ class Parser:
         self.tokens = tokens
         self.pos = 0
 
+    def parse(self) -> ParseTree:
+        return self.program()
+
     def peek(self) -> Token:
         return self.tokens[self.pos] if self.pos < len(self.tokens) else None
 
@@ -17,9 +20,6 @@ class Parser:
 
     def next_token(self):
         self.pos += 1
-
-    def parse(self) -> ParseTree:
-        pass 
 
     def match(self, token_type : str, token_value: str = None) -> bool:
         if self.peek().type == token_type and (token_value is None or self.peek().value == token_value):
@@ -116,8 +116,8 @@ class Parser:
         
         while self.match("IDENTIFIER"):
             node.add_child(self.consume("IDENTIFIER"))
-            if self.match("ASSIGN_OPERATOR"):
-                node.add_child(self.consume("ASSIGN_OPERATOR"))
+            if self.match("RELATIONAL_OPERATOR", "="):
+                node.add_child(self.consume("RELATIONAL_OPERATOR", "="))
             if self.match("NUMBER") or self.match("STRING_LITERAL") or self.match("CHAR_LITERAL"):
                 node.add_child(self.consume(self.peek().type))
             if self.match("SEMICOLON"):
@@ -359,23 +359,23 @@ class Parser:
 
         return node
 
-"""
-    // BAMA 
-    statement_list
-    assignment_statement
-    if_statement
-    while_statement
-    for_statement
-    procedure_or_function_call
-    parameter_list
-    expression
-    simple_expression
-    term
-    factor
-    relational_operator
-    additive_operator
-    multiplicative_operator
-"""
+    """
+        // BAMA 
+        statement_list
+        assignment_statement
+        if_statement
+        while_statement
+        for_statement
+        procedure_or_function_call
+        parameter_list
+        expression
+        simple_expression
+        term
+        factor
+        relational_operator
+        additive_operator
+        multiplicative_operator
+    """
        
     def type_declaration(self) -> ParseTree:
         node = ParseTree("<type_declaration>")
@@ -387,12 +387,14 @@ class Parser:
         
         while self.match("IDENTIFIER"):
             node.add_child(self.consume("IDENTIFIER"))
-            if self.match("ASSIGN_OPERATOR"):
-                node.add_child(self.consume("ASSIGN_OPERATOR"))
+            if self.match("RELATIONAL_OPERATOR", "="):
+                node.add_child(self.consume("RELATIONAL_OPERATOR", "="))
             node.add_child(self.type())
             # TODO : handle type definition 
             if self.match("SEMICOLON"):
                 node.add_child(self.consume("SEMICOLON"))
+
+        return node
 
     def var_declaration(self) -> ParseTree:
         node = ParseTree("<var_declaration>")
@@ -422,14 +424,33 @@ class Parser:
             if self.match("IDENTIFIER"):
                 node.add_child(self.consume("IDENTIFIER"))
 
+        return node 
+
     def type(self) -> ParseTree:
-        pass
+        node = ParseTree("<type>")
+        
+        if self.match("KEYWORD", "larik"):
+            node.add_child(self.array_type())
+        # elif self.match("KEYWORD", "rekaman"):
+        #     node.add_child(self.record_type())
+        elif self.match("KEYWORD", "integer") or self.match("KEYWORD", "char") or self.match("KEYWORD", "boolean") or self.match("KEYWORD", "Real"):
+            node.add_child(self.consume("KEYWORD"))
+        # else :
+        #     raise SyntaxError(f"Expected type definition, we got {self.peek().type} {self.peek().value}", self.peek().line, self.peek().col)
+
+        return node
 
     def array_type(self) -> ParseTree:
-        pass
+        node = ParseTree("<array_type>")
+        return node
+
+    def record_type(self) -> ParseTree:
+        node = ParseTree("<record_type>")
+        return node
 
     def range(self) -> ParseTree:
-        pass
+        node = ParseTree("<range>")
+        return node
 
     def subprogram_declaration(self) -> ParseTree:
         node = ParseTree("<subprogram_declaration>")
@@ -502,3 +523,5 @@ class Parser:
 
         if self.match("KEYWORD", "selesai"):
             node.add_child(self.consume("KEYWORD", "selesai"))
+
+        return node
