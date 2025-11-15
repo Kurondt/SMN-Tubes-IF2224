@@ -31,7 +31,7 @@ class Parser:
         if token.type == token_type and (token_value is None or token.value == token_value):
             self.next_token()
             return ParseTree(str(token))
-        raise SyntaxError(f"Expected token {token_type} with value {token_value}, but got {token}", token.line, token.col)
+        # raise SyntaxError(f"Expected token {token_type} with value {token_value}, but got {token}", token.line, token.col)
 
     '''
     HARDCODED PRODUCTION RULES  
@@ -45,8 +45,10 @@ class Parser:
     type_declaration
     var_declaration
     identifier_list
+    type_definition (tambahan)
     type
     array_type
+    record_type (tambahan)
     range 
     subprogram_declaration
     procedure_declaration
@@ -124,6 +126,203 @@ class Parser:
                 node.add_child(self.consume("SEMICOLON"))
 
         return node
+
+    def type_declaration(self) -> ParseTree:
+        node = ParseTree("<type_declaration>")
+        if self.match("KEYWORD", "tipe"):
+            node.add_child(self.consume("KEYWORD", "tipe"))
+
+        if not self.match("IDENTIFIER"):
+            raise SyntaxError("Expected identifier in type declaration", self.peek().line, self.peek().col)
+        
+        while self.match("IDENTIFIER"):
+            node.add_child(self.consume("IDENTIFIER"))
+            if self.match("RELATIONAL_OPERATOR", "="):
+                node.add_child(self.consume("RELATIONAL_OPERATOR", "="))
+            node.add_child(self.type())
+            # TODO : handle type definition 
+            if self.match("SEMICOLON"):
+                node.add_child(self.consume("SEMICOLON"))
+
+        return node
+
+    def var_declaration(self) -> ParseTree:
+        node = ParseTree("<var_declaration>")
+        if self.match("KEYWORD", "variabel"):
+            node.add_child(self.consume("KEYWORD", "variabel"))
+
+        # if not self.match("IDENTIFIER"):
+            # raise SyntaxError("Expected identifier in variable declaration", self.peek().line, self.peek().col)
+        
+        while self.match("IDENTIFIER"):
+            node.add_child(self.identifier_list())
+
+            if self.match("COLON"):
+                node.add_child(self.consume("COLON"))
+
+            node.add_child(self.type())
+
+            if self.match("SEMICOLON"):
+                node.add_child(self.consume("SEMICOLON"))
+
+        return node
+
+    def identifier_list(self) -> ParseTree:
+        node = ParseTree("<identifier_list>")
+
+        if self.match("IDENTIFIER"):
+            node.add_child(self.consume("IDENTIFIER"))
+        
+        while self.match("COMMA"):
+            node.add_child(self.consume("COMMA"))
+            if self.match("IDENTIFIER"):
+                node.add_child(self.consume("IDENTIFIER"))
+
+        return node 
+
+    def type_definition(self) -> ParseTree:
+        node = ParseTree("<type_definition>")
+
+        if self.match("KEYWORD", "larik") or self.match("KEYWORD", "integer") or self.match("KEYWORD", "char") or self.match("KEYWORD", "boolean") or self.match("KEYWORD", "Real"):
+            node.add_child(self.type())
+        elif self.match("KEYWORD", "rekaman"):
+            node.add_child(self.record_type())
+        # else :
+        #     raise SyntaxError(f"Expected type definition, we got {self.peek().type} {self.peek().value}", self.peek().line, self.peek().col)
+
+
+        return node
+
+    def type(self) -> ParseTree:
+        node = ParseTree("<type>")
+        
+        if self.match("KEYWORD", "larik"):
+            node.add_child(self.array_type())
+        elif self.match("KEYWORD", "integer") or self.match("KEYWORD", "char") or self.match("KEYWORD", "boolean") or self.match("KEYWORD", "Real"):
+            node.add_child(self.consume("KEYWORD"))
+        # else :
+        #     raise SyntaxError(f"Expected type definition, we got {self.peek().type} {self.peek().value}", self.peek().line, self.peek().col)
+
+        return node
+
+    def array_type(self) -> ParseTree:
+        node = ParseTree("<array_type>")
+        if self.match("KEYWORD", "larik"):
+            node.add_child(self.consume("KEYWORD", "larik"))
+        if self.match("LBRACKET"):
+            node.add_child(self.consume("LBRACKET"))
+        node.add_child(self.range())
+        if self.match("RBRACKET"):
+            node.add_child(self.consume("RBRACKET"))
+        if self.match("KEYWORD", "dari"):
+            node.add_child(self.consume("KEYWORD", "dari"))
+        node.add_child(self.type())
+        return node
+
+    # record_type -> KEYWORD(rekaman) + (identifier_list + COLON + type + SEMICOLON)+ + KEYWORD(selesai)
+    def record_type(self) -> ParseTree:
+        node = ParseTree("<record_type>")
+        if self.match("KEYWORD", "rekaman"):
+            node.add_child(self.consume("KEYWORD", "rekaman"))
+
+        # if not self.match("IDENTIFIER"):
+            # raise SyntaxError("Expected identifier in record type", self.peek().line, self.peek().col)
+        
+        while self.match("IDENTIFIER"):
+            node.add_child(self.identifier_list())
+            if self.match("COLON"):
+                node.add_child(self.consume("COLON"))
+            node.add_child(self.type())
+            if self.match("SEMICOLON"):
+                node.add_child(self.consume("SEMICOLON"))
+
+        if self.match("KEYWORD", "selesai"):
+            node.add_child(self.consume("KEYWORD", "selesai"))
+
+        return node
+
+    def range(self) -> ParseTree:
+        node = ParseTree("<range>")
+        node.add_child(self.consume(self.expression()))
+        if self.match("RANGE_OPERATOR", ".."):
+            node.add_child(self.consume("RANGE_OPERATOR", ".."))
+        node.add_child(self.consume(self.expression()))
+        return node
+
+    def subprogram_declaration(self) -> ParseTree:
+        node = ParseTree("<subprogram_declaration>")
+        if self.match("KEYWORD", "prosedur"):
+            node.add_child(self.procedure_declaration())
+        elif self.match("KEYWORD", "fungsi"):
+            node.add_child(self.function_declaration())
+        return node
+
+    def procedure_declaration(self) -> ParseTree:
+        node = ParseTree("<procedure_declaration>")
+        if self.match("KEYWORD", "prosedur"):
+            node.add_child(self.consume("KEYWORD", "prosedur"))
+        
+        if self.match("LPARENTHESIS"):
+            node.add_child(self.formal_parameter_list())
+        
+        if self.match("SEMICOLON"):
+            node.add_child(self.consume("SEMICOLON"))
+
+        # Handle block 
+
+        if self.match("SEMICOLON"):
+            node.add_child(self.consume("SEMICOLON"))
+
+        return node
+
+        
+    def function_declaration(self) -> ParseTree:
+        node = ParseTree("<function_declaration>")
+        if self.match("KEYWORD", "fungsi"):
+            node.add_child(self.consume("KEYWORD", "fungsi"))
+        
+        if self.match("LPARENTHESIS"):
+            node.add_child(self.formal_parameter_list())
+        
+        if self.match("SEMICOLON"):
+            node.add_child(self.consume("SEMICOLON"))
+
+        # Handle block 
+
+        if self.match("SEMICOLON"):
+            node.add_child(self.consume("SEMICOLON"))
+
+        return node
+
+    def formal_parameter_list(self) -> ParseTree:
+        node = ParseTree("<formal_parameter_list>")
+        if self.match("LPARENTHESIS"):
+            node.add_child(self.consume("LPARENTHESIS"))
+        
+        # Handle parameters group 
+
+        while self.match("SEMICOLON"):
+            node.add_child(self.consume("SEMICOLON"))
+
+            # Handle parameters group
+
+        if self.match("RPARENTHESIS"):
+            node.add_child(self.consume("RPARENTHESIS"))
+
+        return node
+
+    def compound_statement(self) -> ParseTree :
+        node = ParseTree("<compound_statement>")
+        if self.match("KEYWORD", "mulai"):
+            node.add_child(self.consume("KEYWORD", "mulai"))
+
+        node.add_child(self.statement_list())
+
+        if self.match("KEYWORD", "selesai"):
+            node.add_child(self.consume("KEYWORD", "selesai"))
+
+        return node
+
             
     def statement_list(self) -> ParseTree:
         node = ParseTree("<statement-list>")
@@ -166,8 +365,7 @@ class Parser:
         else:
             token = self.lookahead()
 
-            raise SyntaxError(f"Expected a statement (mulai, jika, or IDENTIFIER), but got {token}",
-                              token.line())
+            # raise SyntaxError(f"Expected a statement (mulai, jika, or IDENTIFIER), but got {token}", token.line, token.col)
 
     def assignment_statement(self):
         node = ParseTree("<assignment-statement>")
@@ -359,169 +557,3 @@ class Parser:
 
         return node
 
-    """
-        // BAMA 
-        statement_list
-        assignment_statement
-        if_statement
-        while_statement
-        for_statement
-        procedure_or_function_call
-        parameter_list
-        expression
-        simple_expression
-        term
-        factor
-        relational_operator
-        additive_operator
-        multiplicative_operator
-    """
-       
-    def type_declaration(self) -> ParseTree:
-        node = ParseTree("<type_declaration>")
-        if self.match("KEYWORD", "tipe"):
-            node.add_child(self.consume("KEYWORD", "tipe"))
-
-        if not self.match("IDENTIFIER"):
-            raise SyntaxError("Expected identifier in type declaration", self.peek().line, self.peek().col)
-        
-        while self.match("IDENTIFIER"):
-            node.add_child(self.consume("IDENTIFIER"))
-            if self.match("RELATIONAL_OPERATOR", "="):
-                node.add_child(self.consume("RELATIONAL_OPERATOR", "="))
-            node.add_child(self.type())
-            # TODO : handle type definition 
-            if self.match("SEMICOLON"):
-                node.add_child(self.consume("SEMICOLON"))
-
-        return node
-
-    def var_declaration(self) -> ParseTree:
-        node = ParseTree("<var_declaration>")
-        if self.match("KEYWORD", "variabel"):
-            node.add_child(self.consume("KEYWORD", "variabel"))
-        
-        node.add_child(self.identifier_list())
-
-        if self.match("COLON"):
-            node.add_child(self.consume("COLON"))
-
-        node.add_child(self.type())
-
-        if self.match("SEMICOLON"):
-            node.add_child(self.consume("SEMICOLON"))
-
-        return node
-
-    def identifier_list(self) -> ParseTree:
-        node = ParseTree("<identifier_list>")
-
-        if self.match("IDENTIFIER"):
-            node.add_child(self.consume("IDENTIFIER"))
-        
-        while self.match("COMMA"):
-            node.add_child(self.consume("COMMA"))
-            if self.match("IDENTIFIER"):
-                node.add_child(self.consume("IDENTIFIER"))
-
-        return node 
-
-    def type(self) -> ParseTree:
-        node = ParseTree("<type>")
-        
-        if self.match("KEYWORD", "larik"):
-            node.add_child(self.array_type())
-        # elif self.match("KEYWORD", "rekaman"):
-        #     node.add_child(self.record_type())
-        elif self.match("KEYWORD", "integer") or self.match("KEYWORD", "char") or self.match("KEYWORD", "boolean") or self.match("KEYWORD", "Real"):
-            node.add_child(self.consume("KEYWORD"))
-        # else :
-        #     raise SyntaxError(f"Expected type definition, we got {self.peek().type} {self.peek().value}", self.peek().line, self.peek().col)
-
-        return node
-
-    def array_type(self) -> ParseTree:
-        node = ParseTree("<array_type>")
-        return node
-
-    def record_type(self) -> ParseTree:
-        node = ParseTree("<record_type>")
-        return node
-
-    def range(self) -> ParseTree:
-        node = ParseTree("<range>")
-        return node
-
-    def subprogram_declaration(self) -> ParseTree:
-        node = ParseTree("<subprogram_declaration>")
-        if self.match("KEYWORD", "prosedur"):
-            node.add_child(self.procedure_declaration())
-        elif self.match("KEYWORD", "fungsi"):
-            node.add_child(self.function_declaration())
-        return node
-
-    def procedure_declaration(self) -> ParseTree:
-        node = ParseTree("<procedure_declaration>")
-        if self.match("KEYWORD", "prosedur"):
-            node.add_child(self.consume("KEYWORD", "prosedur"))
-        
-        if self.match("LPARENTHESIS"):
-            node.add_child(self.formal_parameter_list())
-        
-        if self.match("SEMICOLON"):
-            node.add_child(self.consume("SEMICOLON"))
-
-        # Handle block 
-
-        if self.match("SEMICOLON"):
-            node.add_child(self.consume("SEMICOLON"))
-
-        return node
-
-        
-    def function_declaration(self) -> ParseTree:
-        node = ParseTree("<function_declaration>")
-        if self.match("KEYWORD", "fungsi"):
-            node.add_child(self.consume("KEYWORD", "fungsi"))
-        
-        if self.match("LPARENTHESIS"):
-            node.add_child(self.formal_parameter_list())
-        
-        if self.match("SEMICOLON"):
-            node.add_child(self.consume("SEMICOLON"))
-
-        # Handle block 
-
-        if self.match("SEMICOLON"):
-            node.add_child(self.consume("SEMICOLON"))
-
-        return node
-
-    def formal_parameter_list(self) -> ParseTree:
-        node = ParseTree("<formal_parameter_list>")
-        if self.match("LPARENTHESIS"):
-            node.add_child(self.consume("LPARENTHESIS"))
-        
-        # Handle parameters group 
-
-        while self.match("SEMICOLON"):
-            node.add_child(self.consume("SEMICOLON"))
-
-            # Handle parameters group
-
-        if self.match("RPARENTHESIS"):
-            node.add_child(self.consume("RPARENTHESIS"))
-
-        return node
-
-    def compound_statement(self) -> ParseTree :
-        node = ParseTree("<compound_statement>")
-        if self.match("KEYWORD", "mulai"):
-            node.add_child(self.consume("KEYWORD", "mulai"))
-
-        node.add_child(self.statement_list())
-
-        if self.match("KEYWORD", "selesai"):
-            node.add_child(self.consume("KEYWORD", "selesai"))
-
-        return node
