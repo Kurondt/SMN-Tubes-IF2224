@@ -23,7 +23,7 @@ class Parser:
 
     def match(self, token_type : str, token_value: str = None) -> bool:
         token = self.peek()
-        if token.type == token_type and (token_value is None or token.value == token_value):
+        if token and token.type == token_type and (token_value is None or token.value == token_value):
             return True
         return False
 
@@ -33,12 +33,11 @@ class Parser:
             self.next_token()
             return ParseTree(str(token))
 
-        print(f"expected_type: {token_type}")
         expected_type = token_type
         expected_value = f"with value [{token_value}]" if token_value is not None else ""
-        actual_type = token.type
-        actual_value = f"with value [{token.value}]" if token.value is not None else ""
-        raise SyntaxError(f"Expected {expected_type} {expected_value}, but got {actual_type} {actual_value}", token.line, token.col)
+        actual_type = token.type if token else "EOF"
+        actual_value = f"with value [{token.value}]" if token and token.value is not None else ""
+        raise SyntaxError(f"Expected {expected_type} {expected_value}, but got {actual_type} {actual_value}", token.line if token else "EOF", token.col if token else "")
 
     '''
     HARDCODED PRODUCTION RULES  
@@ -200,7 +199,7 @@ class Parser:
         
         if self.match("KEYWORD", "larik"):
             node.add_child(self.array_type())
-        elif self.match("KEYWORD", "integer") or self.match("KEYWORD", "char") or self.match("KEYWORD", "boolean") or self.match("KEYWORD", "Real"):
+        else :
             node.add_child(self.consume("KEYWORD"))
 
         return node
@@ -459,11 +458,16 @@ class Parser:
 
         return node
 
-    # parameter_list -> expression + (COMMA + expression)*
+    # parameter_list -> (expression | string_literal | char_literal) + (COMMA + (expression | string_literal | char_literal))*
     def parameter_list(self):
         node = ParseTree("<parameter-list>")
 
-        node.add_child(self.expression())
+        if self.match("STRING_LITERAL"):
+            node.add_child(self.consume("STRING_LITERAL"))
+        elif self.match("CHAR_LITERAL"):
+            node.add_child(self.consume("CHAR_LITERAL"))
+        else:
+            node.add_child(self.expression())
 
         while self.match("COMMA", ","):
             node.add_child(self.consume("COMMA", ","))
