@@ -10,6 +10,11 @@ tipe
   realArray = larik[1..5] dari Real;
   letter = char;
   flag = boolean;
+  koordinat = rekaman
+    x: Real;
+    y: Real;
+    valid: boolean;
+  selesai;
 
 variabel
   x, y, z, sum, avg, count: integer;
