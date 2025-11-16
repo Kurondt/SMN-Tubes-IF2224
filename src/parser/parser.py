@@ -304,7 +304,7 @@ class Parser:
 
             node.add_child(self.parameter_group())
 
-            node.add_child(self.consume("RPARENTHESIS"))
+        node.add_child(self.consume("RPARENTHESIS"))
 
         return node
 
