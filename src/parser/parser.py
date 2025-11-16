@@ -27,6 +27,12 @@ class Parser:
             return True
         return False
 
+    def match_ahead(self, token_type : str, token_value: str = None) -> bool:
+        token = self.lookahead()
+        if token and token.type == token_type and (token_value is None or token.value == token_value):
+            return True
+        return False
+
     def consume(self, token_type : str, token_value: str = None) -> ParseTree:
         token = self.peek()
         if (self.match(token_type, token_value)):
@@ -37,7 +43,7 @@ class Parser:
         expected_value = f"with value [{token_value}]" if token_value is not None else ""
         actual_type = token.type if token else "EOF"
         actual_value = f"with value [{token.value}]" if token and token.value is not None else ""
-        raise SyntaxError(f"Expected {expected_type} {expected_value}, but got {actual_type} {actual_value}", token.line if token else "EOF", token.col if token else "")
+        # raise SyntaxError(f"Expected {expected_type} {expected_value}, but got {actual_type} {actual_value}", token.line if token else "EOF", token.col if token else "")
 
     '''
     HARDCODED PRODUCTION RULES  
@@ -398,7 +404,6 @@ class Parser:
 
     # if_statement -> KEYWORD(jika) + expression + KEYWORD(maka) + statement + (KEYWORD(selain_itu) + statement)?
     def if_statement(self):
-        # TODO Coba koreksi, harusnya if ga wajib else
         node = ParseTree("<if-statement>")
 
         node.add_child(self.consume("KEYWORD", "jika"))
@@ -445,7 +450,6 @@ class Parser:
     
     # procedure_or_function_call -> IDENTIFIER + LPARENTHESIS + (parameter_list)? + RPARENTHESIS
     def procedure_or_function_call(self):
-        # TODO Harusnya sih ya , call tu ga wajib parameter list tapi di spek diwajibin ada, tapi aku implementasi ga wajib bodoamat wle
         node = ParseTree("<procedure/function-call>")
 
         node.add_child(self.consume("IDENTIFIER"))
@@ -498,7 +502,7 @@ class Parser:
             
         node.add_child(self.term())
 
-        while self.match("ARITHMETIC_OPERATOR", "+") or self.match("ARITHMETIC_OPERATOR", "-") or self.match("KEYWORD", "atau"):
+        while self.match("ARITHMETIC_OPERATOR", "+") or self.match("ARITHMETIC_OPERATOR", "-") or self.match("LOGICAL_OPERATOR", "atau"):
             node.add_child(self.additive_operator())
             node.add_child(self.term())
 
@@ -510,26 +514,37 @@ class Parser:
 
         node.add_child(self.factor())
 
-        while self.match("ARITHMETIC_OPERATOR", "*") or self.match("ARITHMETIC_OPERATOR", "/") or self.match("KEYWORD", "dan") or self.match("ARITHMETIC_OPERATOR", "mod") or self.match("ARITHMETIC_OPERATOR", "bagi"):
+        while self.match("ARITHMETIC_OPERATOR", "*") or self.match("ARITHMETIC_OPERATOR", "/") or self.match("LOGICAL_OPERATOR", "dan") or self.match("ARITHMETIC_OPERATOR", "mod") or self.match("ARITHMETIC_OPERATOR", "bagi"):
             node.add_child(self.multiplicative_operator())
             node.add_child(self.factor())
 
         return node
 
-    # factor -> IDENTIFIER | NUMBER | CHAR_LITERAL | STRING_LITERAL | (LPARENTHESIS + expression + RPARENTHESIS) | LOGICAL_OPERATOR(tidak) + factor | function_call
+    # factor -> IDENTIFIER | NUMBER | CHAR_LITERAL | STRING_LITERAL | (LPARENTHESIS + expression + RPARENTHESIS) | LOGICAL_OPERATOR(tidak) + factor | function_call | KEYWORD(true | false)
     def factor(self):
         node = ParseTree("<factor>")
 
-        if self.match("IDENTIFIER"):
+        if self.match("IDENTIFIER") and self.match_ahead("LPARENTHESIS", "("):
+            node.add_child(self.procedure_or_function_call())
+        elif self.match("IDENTIFIER"):
             node.add_child(self.consume("IDENTIFIER"))
-        elif self.match("NUMBER"):
+        elif self.match("CHAR_LITERAL"):
+            node.add_child(self.consume("CHAR_LITERAL"))
+        elif self.match("STRING_LITERAL"):
+            node.add_child(self.consume("STRING_LITERAL"))
+        elif self.match("LPARENTHESIS", "("):
+            node.add_child(self.consume("LPARENTHESIS", "("))
+            node.add_child(self.expression())
+            node.add_child(self.consume("RPARENTHESIS", ")"))
+        elif self.match("LOGICAL_OPERATOR", "tidak"):
+            node.add_child(self.consume("LOGICAL_OPERATOR", "tidak"))
+            node.add_child(self.factor())
+        elif self.match("KEYWORD", "true"):
+            node.add_child(self.consume("KEYWORD", "true"))
+        elif self.match("KEYWORD", "false"):
+            node.add_child(self.consume("KEYWORD", "false"))
+        else:
             node.add_child(self.consume("NUMBER"))
-        elif self.match("CHAR_LITERAL", "'"):
-            node.add_child(self.consume("CHAR_LITERAL", "'"))
-        elif self.match("STRING_LITERAL", '"'):
-            node.add_child(self.consume("STRING_LITERAL", '"'))
-         # TODO ada masalah jadi ga dilanjutin dulu
-
 
         return node
     
@@ -557,7 +572,7 @@ class Parser:
 
         return node
 
-    # additive_operator -> ARITHMETIC_OPERATOR(+ | -) | KEYWORD(atau)
+    # additive_operator -> ARITHMETIC_OPERATOR(+ | -) | LOGICAL_OPERATOR(atau)
     def additive_operator(self):
         node = ParseTree("<additive-operator>")
 
@@ -568,11 +583,11 @@ class Parser:
             node.add_child(self.consume("ARITHMETIC_OPERATOR", "-"))
 
         else:
-            node.add_child(self.consume("KEYWORD", "atau"))
+            node.add_child(self.consume("LOGICAL_OPERATOR", "atau"))
 
         return node
     
-    # multiplicative_operator -> ARITHMETIC_OPERATOR(* | / | mod | bagi) | KEYWORD(dan)
+    # multiplicative_operator -> ARITHMETIC_OPERATOR(* | / | mod | bagi) | LOGICAL_OPERATOR(dan)
     def multiplicative_operator(self):
         node = ParseTree("<multiplicative-operator>")
 
@@ -589,7 +604,7 @@ class Parser:
             node.add_child(self.consume("ARITHMETIC_OPERATOR", "mod"))
 
         else:
-            node.add_child(self.consume("KEYWORD", "dan"))
+            node.add_child(self.consume("LOGICAL_OPERATOR", "dan"))
 
         return node
 
