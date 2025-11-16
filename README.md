@@ -46,7 +46,7 @@
 <div align="right">(<a href="#table-of-contents">back to top</a>)</div>
 
 > [!WARNING]  
-> Only Lexical Analysis (Lexer) has been implemented (as of October 19, 2025).
+> Only Lexical Analyzer (Lexer) and Parser has been implemented (as of November 16, 2025).
 
 1. **Clone or download the repository**
 
@@ -55,7 +55,7 @@
    cd SMN-Tubes-IF2224
    ```
 
-2. **Run the lexical analyzer**
+2. **Run the program (lexical + syntax analyzer)**
 
    ```bash
    # python -m src.main <source .pas file> --dfa <path to dfa rules, optional, default to src/rules/dfa.json>
@@ -66,8 +66,8 @@
 
 3. **Output**
 
-   - Prints all identified tokens.
-   - If lexical errors occur, the program will print error messages in the terminal.
+   - Prints all identified tokens and Parsetree result.
+   - If lexical or syntax errors occur, the program will print error messages in the terminal
 
 ---
 
@@ -75,12 +75,12 @@
 
 <div align="right">(<a href="#table-of-contents">back to top</a>)</div>
 
-| NIM      | Member Name               | Milestone 1                                         | Milestone 2 | Milestone 3 | Milestone 4 | Milestone 5 |
-| -------- | ------------------------- | --------------------------------------------------- | ----------- | ----------- | ----------- | ----------- |
-| 13523002 | Refki Alfarizi            | Project setup and basic functionality               |             |             |             |             |
-| 13523028 | Muhammad Aditya Rahmadeni | Designed DFA rules and implemented rule loaders     |             |             |             |             |
-| 13523088 | Aryo Bama Wiratama        | Designed and implemented scanner/lexer algorithm    |             |             |             |             |
-| 13523116 | Fityatul Haq Rosyidi      | Designed and implemented character stream mechanism |             |             |             |             |
+| NIM      | Member Name               | Milestone 1                                         | Milestone 2                                     | Milestone 3 | Milestone 4 | Milestone 5 |
+| -------- | ------------------------- | --------------------------------------------------- | ------------------------------------------------| ----------- | ----------- | ----------- |
+| 13523002 | Refki Alfarizi            | Project setup and basic functionality               | Project Setup and Report                        |             |             |             |
+| 13523028 | Muhammad Aditya Rahmadeni | Designed DFA rules and implemented rule loaders     | Adjust DFA Rule for Range operator              |             |             |             |
+| 13523088 | Aryo Bama Wiratama        | Designed and implemented scanner/lexer algorithm    | Designed and Implemented Grammar                |             |             |             |
+| 13523116 | Fityatul Haq Rosyidi      | Designed and implemented character stream mechanism | Designed and Implemented ParseTree and Grammar  |             |             |             |
 
 ---
 
