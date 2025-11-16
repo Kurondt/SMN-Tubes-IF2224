@@ -46,10 +46,8 @@ class Parser:
         raise SyntaxError(f"Expected {expected_type} {expected_value}, but got {actual_type} {actual_value}", token.line if token else "EOF", token.col if token else "")
 
     '''
-    HARDCODED PRODUCTION RULES  
+    HARDCODED PRODUCTION RULES :
 
-    // YAYAT
-    daftar node : 
     program 
     program_header
     declaration_part
@@ -69,11 +67,10 @@ class Parser:
     parameter_group (tambahan)
     compound_statement
     block (tambahan)
-
-    // BAMA 
     statement_list
     statement (tambahan)
     assignment_statement
+    array_bucket (tambahan)
     if_statement
     while_statement
     for_statement
