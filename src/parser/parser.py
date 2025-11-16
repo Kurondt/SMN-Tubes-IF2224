@@ -508,7 +508,7 @@ class Parser:
 
         while self.match("ARITHMETIC_OPERATOR", "*") or self.match("ARITHMETIC_OPERATOR", "/") or self.match("KEYWORD", "dan") or self.match("ARITHMETIC_OPERATOR", "mod") or self.match("ARITHMETIC_OPERATOR", "bagi"):
             node.add_child(self.multiplicative_operator())
-            node.add_child(self.term)
+            node.add_child(self.factor())
 
         return node
 
