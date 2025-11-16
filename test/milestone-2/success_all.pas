@@ -18,7 +18,7 @@ variabel
   arr: integer;
   done: boolean;
 
-prosedur showMessage(msg: char);
+prosedur ok(msg: char);
 mulai
   jika tidak done maka
     writeln('Program ', msg, ' seru sekali')
@@ -48,7 +48,7 @@ mulai
   jika (x <= y) maka
     done := false;
 
-  while (x > 0) do
+  selama (x > 0) lakukan
   mulai
     x := x - 1;
   selesai;
