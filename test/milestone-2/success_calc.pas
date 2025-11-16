@@ -1,6 +1,7 @@
 program Calc;
 variabel
   a, b, c: integer;
+
 mulai
   a := 7 + 3 * 2 ;
   b := a bagi 3;

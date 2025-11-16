@@ -7,8 +7,8 @@ tipe
   indeks = integer;
   daftar_nilai = larik[1..10] dari integer;
   koordinat = rekaman
-    x: real;
-    y: real;
+    x: Real;
+    y: Real;
     valid: boolean;
   selesai;
 

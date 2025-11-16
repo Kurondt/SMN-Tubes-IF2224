@@ -1,7 +1,9 @@
 program Float;
-var
+
+variabel
   a, b, c, res: Real;
-begin
+
+mulai
   a := 5.3452;
   b := 2.2213;
   c := 3.4321;
@@ -10,4 +12,4 @@ begin
 
   writeln('res = ', res);
 
-end.
+selesai.
