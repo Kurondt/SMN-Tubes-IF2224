@@ -43,7 +43,7 @@ class Parser:
         expected_value = f"with value [{token_value}]" if token_value is not None else ""
         actual_type = token.type if token else "EOF"
         actual_value = f"with value [{token.value}]" if token and token.value is not None else ""
-        # raise SyntaxError(f"Expected {expected_type} {expected_value}, but got {actual_type} {actual_value}", token.line if token else "EOF", token.col if token else "")
+        raise SyntaxError(f"Expected {expected_type} {expected_value}, but got {actual_type} {actual_value}", token.line if token else "EOF", token.col if token else "")
 
     '''
     HARDCODED PRODUCTION RULES  
@@ -386,19 +386,38 @@ class Parser:
 
             if self.lookahead() and self.lookahead().type == "ASSIGN_OPERATOR":
                 node.add_child(self.assignment_statement())
+            elif self.lookahead() and self.lookahead().type == "LBRACKET":
+                node.add_child(self.assignment_statement())
             else:
                 node.add_child(self.procedure_or_function_call())
 
         return node
         
 
-    # assignment_statement -> IDENTIFIER + ASSIGN_OPERATOR(:=) + expression
+    # assignment_statement -> IDENTIFIER + (array_bucket)? + ASSIGN_OPERATOR(:=) + expression
     def assignment_statement(self):
         node = ParseTree("<assignment-statement>")
         
         node.add_child(self.consume("IDENTIFIER"))
+
+        if self.match("LBRACKET"):
+            node.add_child(self.array_bucket())
+
         node.add_child(self.consume("ASSIGN_OPERATOR", ":="))
         node.add_child(self.expression())
+
+        return node
+
+    # array_bucket ->  LBRACKET + (NUMBER | IDENTIFIER) + RBRACKET
+    def array_bucket(self):
+        node = ParseTree("<array-bucket>")
+
+        node.add_child(self.consume("LBRACKET"))
+        if self.match("IDENTIFIER"):
+            node.add_child(self.consume("IDENTIFIER"))
+        else:
+            node.add_child(self.consume("NUMBER"))
+        node.add_child(self.consume("RBRACKET"))
 
         return node
 
@@ -526,6 +545,9 @@ class Parser:
 
         if self.match("IDENTIFIER") and self.match_ahead("LPARENTHESIS", "("):
             node.add_child(self.procedure_or_function_call())
+        elif self.match("IDENTIFIER") and self.match_ahead("LBRACKET", "["):
+            node.add_child(self.consume("IDENTIFIER"))
+            node.add_child(self.array_bucket())
         elif self.match("IDENTIFIER"):
             node.add_child(self.consume("IDENTIFIER"))
         elif self.match("CHAR_LITERAL"):
