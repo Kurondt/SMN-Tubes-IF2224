@@ -1,151 +1,152 @@
 {
-    "initial_state": "S0",
-    "final_states": {
-        "IDT": "IDENTIFIER",
-        "ART": "ARITHMETIC_OPERATOR",
-        "REL_F": "RELATIONAL_OPERATOR",
-        "REL_B": "RELATIONAL_OPERATOR",
-        "REL_S": "RELATIONAL_OPERATOR",
-        "ASG_F": "ASSIGN_OPERATOR",
-        "NUM": "NUMBER",
-        "NUM_D_F": "NUMBER",
-        "NUM_D_E_F": "NUMBER",
-        "CHR_F": "CHAR_LITERAL",
-        "STR_F": "STRING_LITERAL",
-        "COM": "COMMA",
-        "SEM": "SEMICOLON",
-        "COL": "COLON",
-        "DOT": "DOT",
-        "RNG": "RANGE_OPERATOR",
-        "LPA": "LPARENTHESIS",
-        "RPA": "RPARENTHESIS",
-        "LBR": "LBRACKET",
-        "RBR": "RBRACKET"
+  "initial_state": "S0",
+  "final_states": {
+    "IDT": "IDENTIFIER",
+    "ART": "ARITHMETIC_OPERATOR",
+    "REL_F": "RELATIONAL_OPERATOR",
+    "REL_B": "RELATIONAL_OPERATOR",
+    "REL_S": "RELATIONAL_OPERATOR",
+    "ASG_F": "ASSIGN_OPERATOR",
+    "NUM": "NUMBER",
+    "NUM_D_F": "NUMBER",
+    "NUM_D_E_F": "NUMBER",
+    "CHR_F": "CHAR_LITERAL",
+    "STR_F": "STRING_LITERAL",
+    "COM": "COMMA",
+    "SEM": "SEMICOLON",
+    "COL": "COLON",
+    "DOT": "DOT",
+    "RNG": "RANGE_OPERATOR",
+    "LPA": "LPARENTHESIS",
+    "RPA": "RPARENTHESIS",
+    "LBR": "LBRACKET",
+    "RBR": "RBRACKET"
+  },
+  "transition": {
+    "S0": {
+      "LETTER": "IDT",
+      "DIGIT": "NUM",
+      "+": "ART",
+      "*": "ART",
+      "-": "ART",
+      "/": "ART",
+      "=": "REL_F",
+      "<": "REL_S",
+      ">": "REL_B",
+      ";": "SEM",
+      ",": "COM",
+      ".": "DOT",
+      "(": "LPA",
+      ")": "RPA",
+      "[": "LBR",
+      "]": "RBR",
+      "'": "CHR",
+      ":": "COL",
+      "WHITESPACE": "S0"
     },
-    "transition": {
-        "S0": {
-            "LETTER": "IDT",
-            "DIGIT": "NUM",
-            "+": "ART",
-            "*": "ART",
-            "-": "ART",
-            "/": "ART",
-            "=": "REL_F",
-            "<": "REL_S",
-            ">": "REL_B",
-            ";": "SEM",
-            ",": "COM",
-            ".": "DOT",
-            "(": "LPA",
-            ")": "RPA",
-            "[": "LBR",
-            "]": "RBR",
-            "'": "CHR",
-            ":": "COL",
-            "WHITESPACE": "S0"
-        },
-        "DOT": {
-            ".": "RNG"
-        }, 
-
-        "IDT": {
-            "LETTER": "IDT",
-            "DIGIT": "IDT",
-            "_": "IDT"
-        },
-
-        "NUM": {
-            "DIGIT": "NUM",
-            ".": "NUM_D"
-        },
-
-        "NUM_D": {
-            "E": "NUM_D_E",
-            "DIGIT": "NUM_D_F"
-        },
-
-        "NUM_D_F": {
-            "E": "NUM_D_E",
-            "DIGIT": "NUM_D_F"
-        },
-
-        "NUM_D_E": {
-            "DIGIT": "NUM_D_E_F"
-        },
-
-        "NUM_D_E_F": {
-            "DIGIT": "NUM_D_E_F"
-        },
-
-        "REL_S": {
-            ">": "REL_F",
-            "=": "REL_F"
-        },
-
-        "REL_B": {
-            "=": "REL_F"
-        },
-
-        "COL": {
-            "=": "ASG_F"
-        },
-
-        "CHR": {
-            "ANY": "CHR_1",
-            "'": "CHR_F"
-        },
-
-        "CHR_1": {
-            "ANY": "STR",
-            "'": "CHR_F"
-        },
-
-        "STR": {
-            "ANY": "STR",
-            "'": "STR_F"
-        }
+    "DOT": {
+      ".": "RNG"
     },
 
-    "char_classes": {
-        "LETTER": "a-zA-Z",
-        "DIGIT": "0-9",
-        "WHITESPACE": "^[ \\t\\n\\r]$",
-        "ANY": "^.$"
+    "IDT": {
+      "LETTER": "IDT",
+      "DIGIT": "IDT",
+      "_": "IDT"
     },
 
-    "lookup": {
-        "program": "KEYWORD",
-        "variabel": "KEYWORD",
-        "selesai": "KEYWORD",
-        "jika": "KEYWORD",
-        "maka": "KEYWORD",
-        "selain_itu": "KEYWORD",
-        "selama": "KEYWORD",
-        "lakukan": "KEYWORD",
-        "untuk": "KEYWORD",
-        "ke": "KEYWORD",
-        "turun_ke": "KEYWORD",
-        "integer": "KEYWORD",
-        "real": "KEYWORD",
-        "boolean": "KEYWORD",
-        "char": "KEYWORD",
-        "larik": "KEYWORD",
-        "dari": "KEYWORD",
-        "fungsi": "KEYWORD",
-        "konstanta": "KEYWORD",
-        "tipe": "KEYWORD",
-        "prosedur": "KEYWORD",
-        "mulai": "KEYWORD",
-        "sampai": "KEYWORD",
-        "rekaman": "KEYWORD",
-        "ulangi": "KEYWORD",
-        "true": "KEYWORD",
-        "kasus": "KEYWORD",
-        "false": "KEYWORD",
-        "mod": "ARITHMETIC_OPERATOR",
-        "bagi": "ARITHMETIC_OPERATOR",
-        "dan": "LOGICAL_OPERATOR",
-        "atau": "LOGICAL_OPERATOR",
-        "tidak": "LOGICAL_OPERATOR"
+    "NUM": {
+      "DIGIT": "NUM",
+      ".": "NUM_D"
+    },
+
+    "NUM_D": {
+      "E": "NUM_D_E",
+      "DIGIT": "NUM_D_F"
+    },
+
+    "NUM_D_F": {
+      "E": "NUM_D_E",
+      "DIGIT": "NUM_D_F"
+    },
+
+    "NUM_D_E": {
+      "DIGIT": "NUM_D_E_F"
+    },
+
+    "NUM_D_E_F": {
+      "DIGIT": "NUM_D_E_F"
+    },
+
+    "REL_S": {
+      ">": "REL_F",
+      "=": "REL_F"
+    },
+
+    "REL_B": {
+      "=": "REL_F"
+    },
+
+    "COL": {
+      "=": "ASG_F"
+    },
+
+    "CHR": {
+      "ANY": "CHR_1",
+      "'": "CHR_F"
+    },
+
+    "CHR_1": {
+      "ANY": "STR",
+      "'": "CHR_F"
+    },
+
+    "STR": {
+      "ANY": "STR",
+      "'": "STR_F"
     }
+  },
+
+  "char_classes": {
+    "LETTER": "a-zA-Z",
+    "DIGIT": "0-9",
+    "WHITESPACE": "^[ \\t\\n\\r]$",
+    "ANY": "^.$"
+  },
+
+  "lookup": {
+    "program": "KEYWORD",
+    "variabel": "KEYWORD",
+    "selesai": "KEYWORD",
+    "jika": "KEYWORD",
+    "maka": "KEYWORD",
+    "selain_itu": "KEYWORD",
+    "selama": "KEYWORD",
+    "lakukan": "KEYWORD",
+    "untuk": "KEYWORD",
+    "ke": "KEYWORD",
+    "turun_ke": "KEYWORD",
+    "integer": "KEYWORD",
+    "real": "KEYWORD",
+    "boolean": "KEYWORD",
+    "char": "KEYWORD",
+    "larik": "KEYWORD",
+    "dari": "KEYWORD",
+    "fungsi": "KEYWORD",
+    "konstanta": "KEYWORD",
+    "tipe": "KEYWORD",
+    "prosedur": "KEYWORD",
+    "mulai": "KEYWORD",
+    "sampai": "KEYWORD",
+    "rekaman": "KEYWORD",
+    "ulangi": "KEYWORD",
+    "true": "KEYWORD",
+    "kasus": "KEYWORD",
+    "false": "KEYWORD",
+    "string": "KEYWORD",
+    "mod": "ARITHMETIC_OPERATOR",
+    "bagi": "ARITHMETIC_OPERATOR",
+    "dan": "LOGICAL_OPERATOR",
+    "atau": "LOGICAL_OPERATOR",
+    "tidak": "LOGICAL_OPERATOR"
+  }
 }
