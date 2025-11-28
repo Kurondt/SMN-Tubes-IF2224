@@ -40,6 +40,25 @@ class VarDeclNode(ASTNode):
     def __repr__(self):
         return f"VarDecl(name='{self.name}', type='{self.var_type_name}', tab_idx={self.tab_index})"
 
+class ConstDeclNode(ASTNode):
+    def __init__(self, name, value, const_type, line=0, col=0):
+        super().__init__(line, col)
+        self.name = name
+        self.value = value
+        self.const_type = const_type
+
+    def __repr__(self):
+        return f"ConstDecl(name='{self.name}', val={self.value}, type={self.const_type})"
+
+class TypeDeclNode(ASTNode):
+    def __init__(self, name, type_def, line=0, col=0):
+        super().__init__(line, col)
+        self.name = name
+        self.type_def = type_def
+
+    def __repr__(self):
+        return f"TypeDecl(name='{self.name}', def='{self.type_def}')"
+
 class ProcedureDeclNode(ASTNode):
     def __init__(self, name, params, block, line=0, col=0):
         super().__init__(line, col)
@@ -111,7 +130,7 @@ class StringNode(ASTNode):
         self.value = value
 
     def __repr__(self):
-        return f"String({self.value})"
+        return f"String('{self.value}')"
 
 class CharNode(ASTNode):
     def __init__(self, value, line=0, col=0):
@@ -119,7 +138,7 @@ class CharNode(ASTNode):
         self.value = value
 
     def __repr__(self):
-        return f"Char({self.value})"
+        return f"Char('{self.value}')"
 
 class BooleanNode(ASTNode):
     def __init__(self, value, line=0, col=0):
