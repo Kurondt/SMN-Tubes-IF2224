@@ -197,7 +197,7 @@ class SemanticAnalyzer:
 
     def analyze(self, parse_tree: ParseTree):
         if parse_tree.value == "<program>":
-            return self.visit_program(parse_tree)
+            return self.tab, self.btab, self.atab, self.visit_program(parse_tree)
         raise SemanticError("Invalid Root Node", 0, 0)
 
     def visit_program(self, node: ParseTree):
@@ -832,7 +832,7 @@ class SemanticAnalyzer:
 
     # printing things
 
-    def print_output(self, ast):
+    def print_output(self, tab, btab, atab, ast):
         # tab output
         print("\nOutput")
         print("tabs:")
@@ -840,7 +840,7 @@ class SemanticAnalyzer:
         tab_widths = [4, 15, 12, 6, 6, 4, 4, 6, 6]
         self._print_table_header(tab_headers, tab_widths)
         
-        for i, entry in enumerate(self.tab):
+        for i, entry in enumerate(tab):
             if entry:
                 row = entry.copy()
                 row['idx'] = i
@@ -851,7 +851,7 @@ class SemanticAnalyzer:
         btab_headers = ["idx", "last", "lpar", "psze", "vsze"]
         btab_widths = [4, 6, 6, 6, 6]
         self._print_table_header(btab_headers, btab_widths)
-        for i, entry in enumerate(self.btab):
+        for i, entry in enumerate(btab):
             row = entry.copy()
             row['idx'] = i
             self._print_row(row, btab_headers, btab_widths)
@@ -861,11 +861,11 @@ class SemanticAnalyzer:
         atab_headers = ["idx", "xtyp", "etyp", "low", "high", "elsz", "size"]
         atab_widths = [4, 6, 6, 6, 6, 6, 6]
         
-        if not self.atab:
+        if not atab:
             print("(empty because no array)")
         else:
             self._print_table_header(atab_headers, atab_widths)
-            for i, entry in enumerate(self.atab):
+            for i, entry in enumerate(atab):
                 row = entry.copy()
                 row['idx'] = i
                 self._print_row(row, atab_headers, atab_widths)

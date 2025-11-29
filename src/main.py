@@ -30,9 +30,9 @@ def main():
 
         print("================== SEMANTIC ANALYSIS =================")
         analyzer = SemanticAnalyzer()
-        ast = analyzer.analyze(parse_tree)
+        tab, btab, atab, ast = analyzer.analyze(parse_tree)
         
-        analyzer.print_output(ast)
+        analyzer.print_output(tab, btab, atab, ast)
 
     except LexError as e:
         print(e)
