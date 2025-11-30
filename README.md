@@ -31,6 +31,10 @@
 
 <p align="justify">In the first stage, Lexical Analysis, the system is designed and implemented to scan Pascal-S source code and convert it into a sequence of tokens using Deterministic Finite Automata (DFA). This lexer identifies elements such as keywords, identifiers, operators, numbers, and symbols, forming the foundational step for the subsequent phases of compilation.</p>
 
+<p align="justify">In the second stage, Syntax Analysis (Parser), the system processes the sequence of tokens produced by the lexer and constructs a Parse Tree based on the grammar rules of the adjusted Pascal-S. Using a recursive descent parsing approach, the parser validates whether the token stream conforms to the language specification and forms a hierarchical representation of the program structure.</p>
+
+<p align="justify">In the third stage, Semantic Analysis, the compiler verifies the meaning and consistency of the parsed program by building and analyzing the AST and populating a symbol table. This phase ensures that identifiers are properly declared before use, validates type correctness across expressions and operations, and checks semantic rules such as scope resolution, procedure/function matching, and constant usage. Semantic errors are reported with clear diagnostics, allowing inconsistencies or invalid constructs to be detected early before intermediate code generation.</p>
+
 ---
 
 ## Requirement <a name="requirement"></a>
@@ -61,13 +65,13 @@
    # python -m src.main <source .pas file> --dfa <path to dfa rules, optional, default to src/rules/dfa.json>
    # Example:
 
-   python -m src.main test/milestone-1/example.pas
+   python -m src.main test/milestone-3/program.pas
    ```
 
 3. **Output**
 
-   - Prints all identified tokens and Parsetree result.
-   - If lexical or syntax errors occur, the program will print error messages in the terminal
+   - Prints all identified tokens, parse tree, symbol tables, and decorated AST result.
+   - If lexical, syntax, or semantic errors occur, the program will print informative error messages in the terminal
 
 ---
 
@@ -75,12 +79,12 @@
 
 <div align="right">(<a href="#table-of-contents">back to top</a>)</div>
 
-| NIM      | Member Name               | Milestone 1                                         | Milestone 2                                     | Milestone 3 | Milestone 4 | Milestone 5 |
-| -------- | ------------------------- | --------------------------------------------------- | ------------------------------------------------| ----------- | ----------- | ----------- |
-| 13523002 | Refki Alfarizi            | Project setup and basic functionality               | Project Setup and Report                        |             |             |             |
-| 13523028 | Muhammad Aditya Rahmadeni | Designed DFA rules and implemented rule loaders     | Adjust DFA Rule for Range operator              |             |             |             |
-| 13523088 | Aryo Bama Wiratama        | Designed and implemented scanner/lexer algorithm    | Designed and Implemented Grammar                |             |             |             |
-| 13523116 | Fityatul Haq Rosyidi      | Designed and implemented character stream mechanism | Designed and Implemented ParseTree and Grammar  |             |             |             |
+| NIM      | Member Name               | Milestone 1                                         | Milestone 2                                    | Milestone 3                                | Milestone 4 | Milestone 5 |
+| -------- | ------------------------- | --------------------------------------------------- | ---------------------------------------------- | ------------------------------------------ | ----------- | ----------- |
+| 13523002 | Refki Alfarizi            | Project setup and basic functionality               | Project Setup and Report                       | Designed and implemented Semantic Analyzer |             |             |
+| 13523028 | Muhammad Aditya Rahmadeni | Designed DFA rules and implemented rule loaders     | Adjust DFA Rule for Range operator             | Adjusted DFA rule                          |             |             |
+| 13523088 | Aryo Bama Wiratama        | Designed and implemented scanner/lexer algorithm    | Designed and Implemented Grammar               | Designed and implemented AST nodes         |             |             |
+| 13523116 | Fityatul Haq Rosyidi      | Designed and implemented character stream mechanism | Designed and Implemented ParseTree and Grammar | Adjusted Parser/Syntax Analyzer            |             |             |
 
 ---
 
