@@ -37,7 +37,7 @@ class Parser:
         token = self.peek()
         if (self.match(token_type, token_value)):
             self.next_token()
-            return ParseTree(str(token))
+            return ParseTree(token)
 
         expected_type = token_type
         expected_value = f"with value [{token_value}]" if token_value is not None else ""
