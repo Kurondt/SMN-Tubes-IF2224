@@ -1,7 +1,10 @@
-program Hello;
+program NotSupported;
+
+tipe:
+  angka: integer;
 
 variabel
-  a, b: integer;
+  a, b: angka;
 
 mulai
   a := 5;
